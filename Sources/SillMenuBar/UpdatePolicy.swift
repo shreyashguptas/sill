@@ -12,7 +12,9 @@ import StreamProtocol
 /// or installed by Sill, and the only feed is GitHub's (no server of Sill's, no token, no identifier).
 enum UpdatePolicy {
     /// GitHub's latest published release of Sill (drafts and prereleases are never listed there).
-    static let feed = URL(string: "https://api.github.com/repos/Saffsanity/sill/releases/latest")!
+    /// The GitHub repository whose releases this build offers (this fork's, not upstream's).
+    static let repo = "shreyashguptas/sill"
+    static let feed = URL(string: "https://api.github.com/repos/\(repo)/releases/latest")!
     /// Where a redirect may lead (a renamed repository answers 301 to its new address there).
     static func redirectAllowed(_ url: URL) -> Bool { url.scheme == "https" && url.host == "api.github.com" }
 
@@ -60,12 +62,13 @@ enum UpdatePolicy {
         return Offer(version: version, tag: tag, url: url)
     }
 
-    /// A release's html_url as a page Sill opens: https on github.com, or with a test feed any http
+    /// A release's html_url as a page Sill opens: https on github.com under `repo`'s releases, or with a test feed any http
     /// or https URL with a host.
     static func releasePage(_ text: String, anyReleaseURL: Bool) -> URL? {
         guard let url = URL(string: text), let scheme = url.scheme?.lowercased(), let host = url.host, !host.isEmpty else { return nil }
         if anyReleaseURL { return scheme == "https" || scheme == "http" ? url : nil }
-        return scheme == "https" && host.lowercased() == "github.com" ? url : nil
+        return scheme == "https" && host.lowercased() == "github.com"
+            && url.path.lowercased().hasPrefix("/\(repo)/releases/") ? url : nil
     }
 
     /// `-SillUpdateFeed`: a feed on this Mac only (127.0.0.1, ::1 or localhost, over http or https).

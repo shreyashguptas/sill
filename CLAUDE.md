@@ -1,3 +1,8 @@
+> **This is a fork (shreyashguptas/sill). Read `FORK.md` first: its hard rules win over everything
+> below.** Upstream (Saffsanity/sill) is reviewed line by line, never synced; the code may contact
+> only the owner's devices, this fork's GitHub repository and Apple; the fork's changes are never
+> undone by a merge; `Tests/checks/fork-hosts/run.sh` must pass. Keep this block on every merge.
+
 # Sill
 
 Open-source, free app that streams individual Mac app windows to iPhone and iPad

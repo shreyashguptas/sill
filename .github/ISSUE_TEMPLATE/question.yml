@@ -4,7 +4,7 @@ labels: ["question"]
 body:
   - type: markdown
     attributes:
-      value: The [support page](https://getsill.app/support) may already have the answer.
+      value: The [support page](https://github.com/shreyashguptas/sill/issues) may already have the answer.
   - type: textarea
     id: question
     attributes:

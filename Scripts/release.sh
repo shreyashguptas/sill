@@ -33,7 +33,7 @@
 # `xcrun notarytool store-credentials` (a dry run only warns when it is missing).
 # docs/release-checklist.md says how to get both, and what to do with the zip.
 #
-# --publish makes the release in SILL_RELEASE_REPO, by default Saffsanity/sill: the one repository
+# --publish makes the release in SILL_RELEASE_REPO, by default shreyashguptas/sill: the one repository
 # whose releases every Sill.app's update check reads (Sources/SillMenuBar/UpdatePolicy.swift,
 # `feed`). A release anywhere else can be downloaded, but no Sill.app offers it, and the script
 # warns before it builds and again as it publishes.
@@ -75,7 +75,7 @@
 # - --publish checks origin's tag before it builds: `gh release create` makes a tag the release's
 #   repository lacks from its default branch's tip, so the release (and its source archives) would
 #   name another commit than the one built, and pushing the real tag later would be refused. In
-#   Saffsanity/sill it also passes --verify-tag, so gh itself refuses a tag that isn't there. In
+#   shreyashguptas/sill it also passes --verify-tag, so gh itself refuses a tag that isn't there. In
 #   the release workflow the commit checked out is origin's tag, so there the local tag is checked
 #   (SILL_RELEASE_TAG) and origin is not asked: its checkout keeps no credentials.
 set -euo pipefail
@@ -96,11 +96,11 @@ usage: Scripts/release.sh [--dry-run | --publish | --check-tag]
       notarytool and prints the rest.
   --publish
       after the checks, creates the GitHub Release v<version> in $SILL_RELEASE_REPO
-      (default Saffsanity/sill) with Sill.dmg, Sill.zip and their .sha256 files, the names the
+      (default shreyashguptas/sill) with Sill.dmg, Sill.zip and their .sha256 files, the names the
       site links.
       Before building, it checks that gh reaches that repository and the release isn't there yet,
       and refuses unless origin has the tag v<version> and it names HEAD (git push origin
-      v<version>). Every Sill.app's update check reads only Saffsanity/sill's releases: one
+      v<version>). Every Sill.app's update check reads only shreyashguptas/sill's releases: one
       published anywhere else can be downloaded, but no Sill.app offers it.
   --check-tag
       only checks that $SILL_RELEASE_TAG is v<version> of Packaging/Info.plist (and, when the tag
@@ -272,7 +272,7 @@ remote_tag_problem() {
 
 # The one repository whose releases every Sill.app's update check reads
 # (Sources/SillMenuBar/UpdatePolicy.swift, `feed`).
-feed_repo=Saffsanity/sill
+feed_repo=shreyashguptas/sill
 
 # Whether $1, a repository as gh takes it ([HOST/]OWNER/REPO, or its URL), is `feed_repo`.
 is_feed_repo() {
@@ -573,7 +573,7 @@ DRY
         echo "  SHA-256  $sha  $(basename "$zip")"
     else
         echo "Next (docs/release-checklist.md): Scripts/release.sh --publish creates the GitHub Release"
-        echo "v$version with Sill.dmg, Sill.zip and their .sha256 files, which https://getsill.app/download links."
+        echo "v$version with Sill.dmg, Sill.zip and their .sha256 files, which https://github.com/shreyashguptas/sill/releases/latest links."
         echo "It refuses to start until origin has the tag: git push origin v$version."
         echo "  SHA-256  $dmg_sha  Sill.dmg"
         echo "  SHA-256  $sha  Sill.zip"
@@ -601,7 +601,7 @@ publish_release() {
     if ! gh release create "v$version" "$dir/Sill.dmg" "$dir/Sill.dmg.sha256" "$dir/Sill.zip" "$dir/Sill.zip.sha256" \
         --repo "$repo" ${verify:+--verify-tag} \
         --title "Sill $version" \
-        --notes "Sill for Mac $version ($build), notarized. SHA-256 of Sill.dmg: $dmg_sha. SHA-256 of Sill.zip: $sha. Download at https://getsill.app/download"; then
+        --notes "Sill for Mac $version ($build), notarized. SHA-256 of Sill.dmg: $dmg_sha. SHA-256 of Sill.zip: $sha. Download at https://github.com/shreyashguptas/sill/releases/latest"; then
         rm -rf "$dir"
         fail "gh release create failed for v$version in $repo (its message is above). If it left a draft release there, delete it before trying again."
     fi
@@ -623,7 +623,7 @@ publish_release() {
 # Sill for iPhone and iPad's public beta on TestFlight (docs/release-checklist.md, TestFlight §7): the
 # pre-release's notes carry its link, as the README and the download page do, since every night's
 # notes replace the last; a new link is changed here too.
-nightly_testflight_link=https://testflight.apple.com/join/6v7nqyn3
+nightly_testflight_link=
 
 # The night's date, YYYYMMDD in UTC: SILL_NIGHTLY_DATE when it is set (the nightly workflow gives its
 # jobs the same one), else today.
@@ -715,7 +715,7 @@ nightly_body() {
     date="${date%%-*}"
     url="https://github.com/$repo/releases/download/nightly"
     cat <<BODY
-**Not a release.** A nightly is Sill for Mac built from \`main\` on a night it changed: signed with Developer ID and notarized like a release, but not tried by hand, so it can break. Sill's update check never offers a nightly. To go back, download the release from https://getsill.app/download and replace Sill in your Applications folder: a nightly keeps its settings, permissions and paired devices where the release keeps them, so nothing has to be set up again either way.
+**Not a release.** A nightly is Sill for Mac built from \`main\` on a night it changed: signed with Developer ID and notarized like a release, but not tried by hand, so it can break. Sill's update check never offers a nightly. To go back, download the release from https://github.com/shreyashguptas/sill/releases/latest and replace Sill in your Applications folder: a nightly keeps its settings, permissions and paired devices where the release keeps them, so nothing has to be set up again either way.
 
 **Newest: Sill for Mac $version ($build), ${date:0:4}-${date:4:2}-${date:6:2}, from [\`${head:0:7}\`](https://github.com/$repo/commit/$head)**
 
